@@ -1,0 +1,28 @@
+{
+    "id":"nodebb-plugin-aristois-linkmc",
+    "url": "",
+    "library": "library.js",
+    "staticDirs": {},
+    "less": [],
+    "hooks": [
+        {
+            "hook": "filter:account/edit.build",
+            "method": "onAccountEdit"
+        },
+        {
+            "hook": "static:app.load",
+            "method": "onLoad"
+        },
+        {
+            "hook": "action:user.loggedIn",
+            "method": "onLogin"
+        },
+        {
+            "hook": "filter:admin.header.build",
+            "method": "addMenuBtn"
+        }
+    ],
+    "scripts": [],
+    "acpScripts": [],
+    "templates": "./templates"
+}

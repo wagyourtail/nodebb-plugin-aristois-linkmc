@@ -1,0 +1,14 @@
+{
+  "name": "nodebb-plugin-aristois-linkmc",
+  "version": "1.0.0",
+  "description": "link minecraft account using mc-oauth.net",
+  "main": "library.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "node-fetch": "*"
+  },
+  "author": "Wagyourtail",
+  "license": "MIT"
+}
