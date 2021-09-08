@@ -1,6 +1,6 @@
 {
   "name": "nodebb-plugin-aristois-linkmc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "link minecraft account using mc-oauth.net",
   "main": "library.js",
   "scripts": {
