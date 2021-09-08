@@ -29,22 +29,34 @@ async function getUserSlugFromId(uid) {
 }
 
 async function checkDonor(uid) {
-    const uuid = await DB.get(`user:${uid}:linkmc:uuid`);
+    let uuid = await DB.get(`user:${uid}:linkmc:uuid`);
     if (uuid) {
-        const res = await fetch(`https://api.aristois.net/v2/donor?uuid=${uuid}`, {headers: {api_password: await DB.get("linkmc:apikey")}});
+        // API expects dashed uuid
+        uuid = uuid.replace(/([A-z0-9]{8})([A-z0-9]{4})([A-z0-9]{4})([A-z0-9]{4})([A-z0-9]{12})/gmi, "$1-$2-$3-$4-$5");
+        const bearer = await DB.get("linkmc:apikey");
+        const res = await fetch(`https://api.aristois.net/v3/user/${uuid}`, {
+            headers: {
+                Authorization: `Bearer ${bearer}`
+            }
+        });
         if (res.status === 200) {
+            const member = Group.isMember(uid, await DB.get("linkmc:donor"));
             const info = await res.json();
-            if (info.status) {
-                if (info.donor) {
-                    Group.join(await DB.get("linkmc:donor"), uid);
-                    Notification.push(await Notification.create({
-                        bodyShort: `You have ranked up to donor`,
-                        nid: `donor_rankup:${uid}`,
-                        datetime: Date.now()
-                    }), uid);
-                } else {
+            if (info.properties) {
+                if (info.properties.donor) {
+                    if (!member) {
+                        Group.join(await DB.get("linkmc:donor"), uid);
+                        Notification.push(await Notification.create({
+                            bodyShort: `You have ranked up to donor`,
+                            nid: `donor_rankup:${uid}`,
+                            datetime: Date.now()
+                        }), uid);
+                    }
+                } else if (member) {
                     Group.leave(await DB.get("linkmc:donor"), uid);
                 }
+            } else {
+                console.error("User not in Aristois database");
             }
         } else {
             console.error(`got error code ${res.status} from donor api: ${res.statusText}`)
